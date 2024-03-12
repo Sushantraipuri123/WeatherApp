@@ -18,7 +18,7 @@ function Inputs() {
         className=' flex flex-row w-1/4 justify-center items-center'
         >
             <button name='matrix' className='text-xl text-white font-light'>&deg; C</button>
-            <p className=' text-xl to-white mx-2'>|</p>
+            <p className=' text-xl text-white mx-2'>|</p>
             <button name='imperial' className='text-xl text-white font-light'>F</button>
 
         </div>
