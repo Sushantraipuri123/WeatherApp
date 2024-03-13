@@ -10,11 +10,11 @@ function App() {
   
 
   const fetchWeather = async ()=>{
-    const data = await getWeatherData("weather", {q:"london"})
-    console.log(data)
+    const data = await getWeatherData("weather", { q: "london"})
+    // console.log(data)
   }
 
-  fetchWeather()
+  fetchWeather();
 
   return (
     <div
