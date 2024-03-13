@@ -1,13 +1,20 @@
-import { useState } from 'react'
 import './App.css'
 import TopButton from './component/TopButton';
 import Inputs from './component/Inputs';
 import TimeLocaation from './component/TimeLocaation';
 import TemperatureDetails from './component/TemperatureDetails';
 import Forecast from './component/Forecast';
+import getWeatherData from './services/WeatherService';
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+
+  const fetchWeather = async ()=>{
+    const data = await getWeatherData("weather", {q:"london"})
+    console.log(data)
+  }
+
+  fetchWeather()
 
   return (
     <div
