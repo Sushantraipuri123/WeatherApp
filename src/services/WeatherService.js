@@ -1,5 +1,3 @@
-import { data } from "autoprefixer";
-
 const API_KEY = "37e4710446e86b83da991bdc7bcab3f1";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
@@ -36,6 +34,9 @@ const {main:details, icon} = weather[0]
 const getFormatedWeatherData= async(searchParam)=> {
    const formatedCurrentWeather = await getWeatherData("weather", searchParam )
    .then(formatCurrentWeather);
+
+
+   const {lat, lon} = formatedCurrentWeather
 
    return formatedCurrentWeather
 }
