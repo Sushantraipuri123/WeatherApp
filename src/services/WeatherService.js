@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 const API_KEY = "37e4710446e86b83da991bdc7bcab3f1";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
@@ -15,35 +17,53 @@ const getWeatherData = async (infoType, searchParam) => {
   }
 };
 
-const formatCurrentWeather = (data) =>{
- const {
-   coord: {lat, lon},
+const formatCurrentWeather = (data) => {
+  const {
+    coord: { lat, lon },
+    main: { temp, feels_like, temp_min, temp_max, humidity },
+    name,
+    dt,
+    sys: { country, sunrise, sunset }, // Fixed typo in sunset
+    weather,
+    wind: { speed }
+  } = data;
 
-   main: { temp, feels_like, temp_min, temp_max, humidity},
-   name,
-   dt,
-   sys: {country, sunrise, sumset},
-   weather,
-   wind: {speed}
- } = data
+  const { main: details, icon } = weather[0];
 
-const {main:details, icon} = weather[0]
+  return { lat, lon, temp, feels_like, temp_min, temp_max, humidity, name, dt, country, sunrise, sunset, details, icon, speed };
+};
 
- return {lat, lon, temp, feels_like, temp_min, temp_max, humidity, name, dt, country, sunrise, sumset, details, icon, speed}
-}
+const formatDailyHourlyWeather = (data, timezone) => {
+  let { daily, hourly } = data;
+  
+  const formatToLocalTime = (secs, format="cccc, dd LLL yyyy' | Local time: 'hh:mm a") =>
+    DateTime.fromSeconds(secs).setZone(timezone).toFormat(format);
 
-const getFormatedWeatherData= async(searchParam)=> {
-   const formatedCurrentWeather = await getWeatherData("weather", searchParam )
-   .then(formatCurrentWeather);
+  daily = daily.slice(1, 6).map(d => ({
+    title: formatToLocalTime(d.dt),
+    temp: d.temp.day,
+    icon: d.weather[0].icon
+  }));
 
+  hourly = hourly.slice(1, 6).map(h => ({
+    title: formatToLocalTime(h.dt, 'hh:mm a'),
+    temp: h.temp,
+    icon: h.weather[0].icon
+  }));
 
-   const {lat, lon} = formatedCurrentWeather
+  return { daily, hourly };
+};
 
-   const formatedForecastWeather = await getWeatherData('oncall',{
-      lat, lon, exclude:'current, minutely, alerts', units: searchParam.units
-   })
+const getFormattedWeatherData = async (searchParam) => {
+  const formattedCurrentWeather = await getWeatherData("weather", searchParam).then(formatCurrentWeather);
 
-   return formatedCurrentWeather
-}
+  const { lat, lon } = formattedCurrentWeather;
 
-export default getFormatedWeatherData;
+  const formattedForecastWeather = await getWeatherData('forecast', {
+    lat, lon, exclude: 'current,minutely,alerts', units: searchParam.units
+  }).then(data => formatDailyHourlyWeather(data, searchParam.timezone));
+
+  return { ...formattedCurrentWeather, ...formattedForecastWeather };
+};
+
+export default getFormattedWeatherData;
