@@ -18,6 +18,7 @@ const getWeatherData = async (infoType, searchParam) => {
 const formatCurrentWeather = (data) =>{
  const {
    coord: {lat, lon},
+
    main: { temp, feels_like, temp_min, temp_max, humidity},
    name,
    dt,
@@ -37,6 +38,10 @@ const getFormatedWeatherData= async(searchParam)=> {
 
 
    const {lat, lon} = formatedCurrentWeather
+
+   const formatedForecastWeather = await getWeatherData('oncall',{
+      lat, lon, exclude:'current, minutely, alerts', units: searchParam.units
+   })
 
    return formatedCurrentWeather
 }

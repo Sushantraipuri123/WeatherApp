@@ -10,7 +10,7 @@ function App() {
   
 
   const fetchWeather = async ()=>{
-    const data = await getFormatedWeatherData( { q: "london"})
+    const data = await getFormatedWeatherData( { q: "mexico"})
     console.log(data)
   }
 
